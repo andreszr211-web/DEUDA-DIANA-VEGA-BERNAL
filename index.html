@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estado de Deuda - Diana Sofía Vega Bernal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+            color: white;
+            padding: 25px 0;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff9800, #ffeb3b, #ff9800);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite linear;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .client-info {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border-left: 6px solid #d32f2f;
+        }
+        
+        .client-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d32f2f, #ff9800);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        
+        .client-details {
+            flex: 1;
+        }
+        
+        .client-details h2 {
+            color: #d32f2f;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .debt-summary {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .debt-summary::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #d32f2f, #ff9800, #d32f2f);
+        }
+        
+        .debt-amount {
+            font-size: 3.5rem;
+            color: #d32f2f;
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .original-amount {
+            font-size: 1.8rem;
+            color: #666;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .interest-info {
+            background-color: #fff3e0;
+            border-left: 6px solid #ff9800;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-radius: 0 10px 10px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .detail-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .detail-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .detail-card h3 {
+            color: #d32f2f;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #f5f5f5;
+            padding-bottom: 10px;
+            font-size: 1.4rem;
+        }
+        
+        .products-list {
+            list-style-type: none;
+        }
+        
+        .products-list li {
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .products-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .product-price {
+            font-weight: bold;
+            color: #d32f2f;
+        }
+        
+        .timeline {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .timeline-item {
+            display: flex;
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .timeline-date {
+            min-width: 130px;
+            font-weight: bold;
+            color: #d32f2f;
+            font-size: 1.1rem;
+        }
+        
+        .timeline-content {
+            flex: 1;
+            padding-left: 25px;
+            border-left: 3px solid #d32f2f;
+            position: relative;
+        }
+        
+        .timeline-content::before {
+            content: "";
+            position: absolute;
+            left: -10px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #d32f2f;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px #d32f2f;
+        }
+        
+        .timeline-item:last-child .timeline-content {
+            border-left: 3px dashed #d32f2f;
+        }
+        
+        .warning-box {
+            background-color: #ffebee;
+            border: 2px solid #d32f2f;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .warning-box h2 {
+            color: #d32f2f;
+            margin-bottom: 15px;
+        }
+        
+        .contact-info {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .contact-info h2 {
+            color: #2e7d32;
+            margin-bottom: 20px;
+        }
+        
+        .contact-details {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin-top: 20px;
+        }
+        
+        .contact-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .contact-icon {
+            font-size: 2.5rem;
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+        
+        .contact-email {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .contact-email:hover {
+            background-color: #388E3C;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            margin-top: 30px;
+            font-size: 0.9rem;
+        }
+        
+        .highlight {
+            background-color: #fff9c4;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .virtual-office {
+            background-color: #e3f2fd;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            border-left: 5px solid #2196F3;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .debt-amount {
+                font-size: 2.8rem;
+            }
+            
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .client-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .contact-details {
+                flex-direction: column;
+                gap: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ESTADO DE DEUDA</h1>
+            <p>Información detallada sobre acumulación de intereses</p>
+        </header>
+        
+        <section class="client-info">
+            <div class="client-avatar">DV</div>
+            <div class="client-details">
+                <h2>Diana Sofía Vega Bernal</h2>
+                <p><strong>Documento:</strong> T.I. 1028786782</p>
+                <p><strong>Email:</strong> skatedsvb@gmail.com</p>
+                <p><strong>Teléfono:</strong> +57 321 2634063</p>
+            </div>
+        </section>
+        
+        <section class="debt-summary">
+            <h2>Deuda Actual</h2>
+            <div class="debt-amount">$7.000.000 COP</div>
+            <div class="original-amount">Compra original: $2.000.000 COP</div>
+            <p>Esta deuda ha sido generada por la acumulación de intereses sobre compras de maquillaje.</p>
+        </section>
+        
+        <section class="interest-info">
+            <h2>Información sobre Intereses</h2>
+            <p>Los intereses se han acumulado debido al no pago oportuno de la deuda inicial. La tasa de interés aplicada y el período de mora han contribuido al crecimiento significativo del monto adeudado.</p>
+        </section>
+        
+        <section class="details-grid">
+            <div class="detail-card">
+                <h3>Detalles de la Compra Original</h3>
+                <p><strong>Monto inicial:</strong> $2.000.000 COP</p>
+                <p><strong>Fecha de compra:</strong> 15 de marzo de 2022</p>
+                <p><strong>Concepto:</strong> Múltiples productos de maquillaje</p>
+                <p><strong>Plazo original de pago:</strong> 30 días</p>
+            </div>
+            
+            <div class="detail-card">
+                <h3>Productos Adquiridos</h3>
+                <ul class="products-list">
+                    <li>Paleta de sombras profesional <span class="product-price">$450.000</span></li>
+                    <li>Base de maquillaje de lujo <span class="product-price">$380.000</span></li>
+                    <li>Kit de brochas premium <span class="product-price">$520.000</span></li>
+                    <li>Corrector y contorno <span class="product-price">$280.000</span></li>
+                    <li>Labiales y brillos <span class="product-price">$370.000</span></li>
+                </ul>
+            </div>
+            
+            <div class="detail-card">
+                <h3>Acumulación de Intereses</h3>
+                <p><strong>Tasa de interés mensual:</strong> 5%</p>
+                <p><strong>Período de mora:</strong> 24 meses</p>
+                <p><strong>Intereses acumulados:</strong> $5.000.000 COP</p>
+                <p><strong>Capital + Intereses:</strong> $7.000.000 COP</p>
+            </div>
+        </section>
+        
+        <section class="timeline">
+            <h2>Historial de la Deuda</h2>
+            
+            <div class="timeline-item">
+                <div class="timeline-date">Marzo 2022</div>
+                <div class="timeline-content">
+                    <h3>Compra Inicial</h3>
+                    <p>Se realiza compra de múltiples productos de maquillaje por valor de <span class="highlight">$2.000.000 COP</span> con plazo de pago de 30 días.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-date">Abril 2022</div>
+                <div class="timeline-content">
+                    <h3>Vencimiento del Pago</h3>
+                    <p>Vence el plazo de pago sin que se realice el abono. Comienza a generar intereses de mora.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-date">Junio 2022</div>
+                <div class="timeline-content">
+                    <h3>Primer Recordatorio</h3>
+                    <p>Se envía notificación recordando el pago pendiente. La deuda asciende a <span class="highlight">$2.300.000 COP</span>.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-date">Diciembre 2022</div>
+                <div class="timeline-content">
+                    <h3>Deuda Significativa</h3>
+                    <p>La deuda supera los <span class="highlight">$3.500.000 COP</span> debido a la acumulación continua de intereses.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-date">Actualidad</div>
+                <div class="timeline-content">
+                    <h3>Deuda Actual</h3>
+                    <p>La deuda asciende a <span class="highlight">$7.000.000 COP</span> tras 24 meses de acumulación de intereses.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="warning-box">
+            <h2>¡Atención!</h2>
+            <p>Esta deuda continúa generando intereses hasta su liquidación total. Se recomienda contactar para establecer un plan de pagos y evitar el crecimiento adicional de la obligación.</p>
+        </section>
+        
+        <section class="contact-info">
+            <h2>Información de Contacto</h2>
+            <p><strong>Departamento de Cobranzas - Belleza Express</strong></p>
+            
+            <div class="virtual-office">
+                <h3>📧 Servicio 100% Digital</h3>
+                <p>Atendemos exclusivamente por correo electrónico para un servicio más ágil y eficiente.</p>
+            </div>
+            
+            <div class="contact-details">
+                <div class="contact-item">
+                    <div class="contact-icon">✉️</div>
+                    <p><strong>Correo Electrónico</strong></p>
+                    <p>Único medio de contacto</p>
+                    <a href="mailto:cobranzasgits.a@gmail.com" class="contact-email">cobranzasgits.a@gmail.com</a>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 15px; background-color: #E1F5FE; border-radius: 8px;">
+                <p><strong>Nota:</strong> Para agilizar su proceso, por favor incluya en el asunto del correo: cobranzasgits.a@gmail.com</p>
+                <p>"Diana Vega - Consulta Deuda"</p>
+            </div>
+        </section>
+        
+        <footer>
+            <p>Cobranzas S.A.</p>
+            <p>&copy; 2023 - Belleza Express - Estado de Deuda</p>
+        </footer>
+    </div>
+</body>
+</html>
